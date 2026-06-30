@@ -8,9 +8,24 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         plans = [
-            {"name": "Free", "price": 0, "storage_limit": 1},
-            {"name": "Basic", "price": 499, "storage_limit": 20},
-            {"name": "Premium", "price": 999, "storage_limit": 100},
+            {
+                "name": "Free",
+                "price": 0,
+                "storage_limit": 1,
+                "features": "Basic access"
+            },
+            {
+                "name": "Basic",
+                "price": 499,
+                "storage_limit": 20,
+                "features": "Dashboard access, 20GB storage"
+            },
+            {
+                "name": "Premium",
+                "price": 999,
+                "storage_limit": 100,
+                "features": "Premium content, Unlimited dashboard, 100GB storage"
+            },
         ]
 
         for plan in plans:
@@ -19,6 +34,7 @@ class Command(BaseCommand):
                 defaults={
                     "price": plan["price"],
                     "storage_limit": plan["storage_limit"],
+                    "features": plan["features"],
                 },
             )
 
