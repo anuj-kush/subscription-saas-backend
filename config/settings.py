@@ -17,6 +17,7 @@ from pathlib import Path
 import os
 import dj_database_url
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -155,25 +156,29 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = "users.User"
 
-DATABASES = {
+# Database
 
-'default':{
 
-'ENGINE':'django.db.backends.mysql',
 
-'NAME':'subscription',
+if os.environ.get("DATABASE_URL"):
+    # Render (PostgreSQL)
+    DATABASES = {
+        "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    }
+else:
+    # Local (MySQL)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": "subscription",
+            "USER": "root",
+            "PASSWORD": "Anuj@1234",
+            "HOST": "localhost",
+            "PORT": "3306",
+        }
+    }
 
-'USER':'root',
 
-'PASSWORD':'Anuj@1234',
-
-'HOST':'localhost',
-
-'PORT':'3306'
-
-}
-
-}
 
 
 SIMPLE_JWT = {
