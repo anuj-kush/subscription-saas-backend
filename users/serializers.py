@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User
+from plans.models import Plan
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,9 +31,18 @@ class SignupSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+
         password = validated_data.pop("password")
 
-        user = User(**validated_data)
+        # Get Free Plan
+        free_plan = Plan.objects.get(name="Free")
+
+        # Create User
+        user = User(
+            current_plan=free_plan,
+            **validated_data
+        )
+
         user.set_password(password)
         user.save()
 

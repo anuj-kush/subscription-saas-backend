@@ -1,32 +1,15 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-from .serializers import SignupSerializer
-
 from django.contrib.auth import authenticate
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import LoginSerializer
+from .serializers import SignupSerializer, LoginSerializer
+from .permissions import IsPremium
 
-from rest_framework.permissions import IsAuthenticated
 
-
-class ProfileView(APIView):
-
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-
-        return Response({
-            "name": request.user.name,
-            "email": request.user.email,
-            "plan": request.user.current_plan.name
-        })
 class SignupView(APIView):
 
     def post(self, request):
@@ -37,9 +20,7 @@ class SignupView(APIView):
             serializer.save()
 
             return Response(
-                {
-                    "message": "User Registered Successfully"
-                },
+                {"message": "User Registered Successfully"},
                 status=status.HTTP_201_CREATED
             )
 
@@ -47,8 +28,6 @@ class SignupView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-
-
 
 
 class LoginView(APIView):
@@ -82,9 +61,10 @@ class LoginView(APIView):
                 "message": "Login Successful"
             })
 
-        return Response(serializer.errors,
-                        status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class ProfileView(APIView):
@@ -93,23 +73,35 @@ class ProfileView(APIView):
 
     def get(self, request):
 
+        plan_name = (
+            request.user.current_plan.name
+            if request.user.current_plan
+            else "Free"
+        )
+
         return Response({
             "name": request.user.name,
             "email": request.user.email,
-            "plan": request.user.current_plan.name
+            "plan": plan_name
         })
-    
+
+
 class DashboardView(APIView):
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
+        plan_name = (
+            request.user.current_plan.name
+            if request.user.current_plan
+            else "Free"
+        )
+
         return Response({
             "message": f"Welcome {request.user.name}",
-            "plan": request.user.current_plan.name
+            "plan": plan_name
         })
-from .permissions import IsPremium
 
 
 class PremiumContentView(APIView):
