@@ -12,28 +12,44 @@ class Command(BaseCommand):
                 "name": "Free",
                 "price": 0,
                 "storage_limit": 1,
-                "features": "Basic access"
+                "access_level": "FREE",
+                "features": [
+                    "Basic Dashboard",
+                    "1 GB Storage"
+                ],
             },
             {
                 "name": "Basic",
                 "price": 499,
                 "storage_limit": 20,
-                "features": "Dashboard access, 20GB storage"
+                "access_level": "BASIC",
+                "features": [
+                    "Dashboard",
+                    "20 GB Storage",
+                    "Email Support"
+                ],
             },
             {
                 "name": "Premium",
                 "price": 999,
                 "storage_limit": 100,
-                "features": "Premium content, Unlimited dashboard, 100GB storage"
+                "access_level": "PREMIUM",
+                "features": [
+                    "Premium Dashboard",
+                    "100 GB Storage",
+                    "Premium Content",
+                    "Priority Support"
+                ],
             },
         ]
 
         for plan in plans:
-            Plan.objects.get_or_create(
+            Plan.objects.update_or_create(
                 name=plan["name"],
                 defaults={
                     "price": plan["price"],
                     "storage_limit": plan["storage_limit"],
+                    "access_level": plan["access_level"],
                     "features": plan["features"],
                 },
             )
